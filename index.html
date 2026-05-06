@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="container"></div>
+    <div id="onePokeContainer"></div>
+    <script defer>
+        const url = "https://pokeapi.co/api/v2/pokemon/?limit=10&offset19"
+        async function getPoke(url){
+            const res = await fetch(url);
+            const data = await res.json();
+            // console.log(data);
+            displayResults(data.results);
+        }
+
+        function displayResults(results){
+            // console.log(results); // Just the array
+            const pokeBowl = document.querySelector("#container");
+            for(mon of results){
+                // console.log(mon); // Log each pokemon individually (Success!)
+                const pokemonItem = `<div>
+                    <h2 id="${mon.name}">${mon.name}</h2>
+                    <p>${mon.url}</p>
+                    </div>`;
+                    pokeBowl.innerHTML +=pokemonItem;
+            }
+
+            let pokeList = document.querySelectorAll("p");
+            pokeList.forEach(element => {
+                element.addEventListener("click", (e) =>{
+                    console.log(e.target);
+                    getIndividualOne(e.target.innerHTML);
+                })
+            })
+        }
+        // GO !!
+        getPoke(url);
+
+        async function getIndividualOne(url) {
+            const res = await fetch(url);
+            const one = await res.json();
+            displayIndividualPoke(one)   
+            console.log(one)
+        }
+
+        function displayIndividualPoke(results){
+            const onePoke = document.querySelector("#onePokeContainer");
+            let statResults = "";
+            results.stats.forEach(stat => {
+                statResults += `
+                    <li>
+                        ${stat.stat.name}: ${stat.base_stat}
+                    </li>
+                `;
+            });
+            
+            const onePokemonItem = `
+            <div>
+                <h2 id ="${results.name}">${results.name}</h2>
+                <img src ="${results.sprites["back_default"]}" alt="${results.name}">
+                <ul>
+                    <li>Height: ${results.height}</li>
+                    <li>weight: ${results.weight}</li>
+                </ul>
+                
+                <p><strong>Stats</strong></p>
+                <ul>
+                    ${statResults}
+                </ul>
+            </div>`;
+            onePoke.innerHTML = onePokemonItem;   
+        }
+
+    </script>
+</body>
+</html>
